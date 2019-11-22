@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "496361934960",
+    "firebase_url": "https://vt-joinme-25ade.firebaseio.com",
+    "project_id": "vt-joinme-25ade",
+    "storage_bucket": "vt-joinme-25ade.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:496361934960:android:501ac99c3db23bae7c24b5",
+        "android_client_info": {
+          "package_name": "com.nickjgski.vtjoinme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "496361934960-uvf5vi3k74odnbphqghnpi833svlp4lh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nickjgski.vtjoinme",
+            "certificate_hash": "4278e5796cecb2a98c3b55e86b3ca39f2b0a3eee"
+          }
+        },
+        {
+          "client_id": "496361934960-2bsj075n6pjov1p1vn5qk48cbr2tu25j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBo2qw-AWOKqsf4RlMb6hIT8yUO9Gii2JU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "496361934960-2bsj075n6pjov1p1vn5qk48cbr2tu25j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
