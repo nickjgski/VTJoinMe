@@ -1,4 +1,4 @@
-package com.nickjgski.vtjoinme.ui.home
+package com.nickjgski.vtjoinme.ui.list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,20 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.nickjgski.vtjoinme.R
 
-class HomeFragment : Fragment() {
+class ListFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var galleryViewModel: ListViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeViewModel =
-            ViewModelProviders.of(this).get(HomeViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
-        val textView: TextView = root.findViewById(R.id.text_home)
-        homeViewModel.text.observe(this, Observer {
+        galleryViewModel =
+            ViewModelProviders.of(this).get(ListViewModel::class.java)
+        val root = inflater.inflate(R.layout.fragment_list, container, false)
+        val textView: TextView = root.findViewById(R.id.text_gallery)
+        galleryViewModel.text.observe(this, Observer {
             textView.text = it
         })
         return root

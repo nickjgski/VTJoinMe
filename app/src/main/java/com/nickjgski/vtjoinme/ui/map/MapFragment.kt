@@ -1,4 +1,4 @@
-package com.nickjgski.vtjoinme.ui.send
+package com.nickjgski.vtjoinme.ui.map
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,20 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.nickjgski.vtjoinme.R
 
-class SendFragment : Fragment() {
+class MapFragment : Fragment() {
 
-    private lateinit var sendViewModel: SendViewModel
+    private lateinit var homeViewModel: MapViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        sendViewModel =
-            ViewModelProviders.of(this).get(SendViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_send, container, false)
-        val textView: TextView = root.findViewById(R.id.text_send)
-        sendViewModel.text.observe(this, Observer {
+        homeViewModel =
+            ViewModelProviders.of(this).get(MapViewModel::class.java)
+        val root = inflater.inflate(R.layout.fragment_map, container, false)
+        val textView: TextView = root.findViewById(R.id.text_home)
+        homeViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
         return root
