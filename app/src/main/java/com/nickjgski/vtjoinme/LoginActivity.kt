@@ -96,5 +96,4 @@ class LoginActivity : AppCompatActivity() {
             })
         // [END auth_fui_delete]
     }
-
 }
