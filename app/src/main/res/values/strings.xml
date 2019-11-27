@@ -12,4 +12,59 @@
     <string name="menu_list">Table List</string>
     <string name="menu_friends">Friends</string>
     <string name="menu_account">Accounts</string>
+
+
+    <string-array name=“buildings”>
+	<item>Agnew Hall</item>
+	<item>Architecture Annex</item>
+	<item>Bishop-Favrao Hall</item>
+	<item>Burruss Hall</item>
+	<item>Newman Library</item>
+	<item>Cheatham Hall</item>
+	<item>New Classroom Building</item>
+	<item>Cowgill Hall</item>
+	<item>Davidson Hall</item>
+	<item>Derring Hall</item>
+	<item>Dietrick Hall</item>
+	<item>Durham Hall</item>
+	<item>Engel Hall</item>
+	<item>Femoyer Hall</item>
+	<item>Fralin Life Science Institute</item>
+	<item>Johnston Student Center</item>
+	<item>Goodwin Hall</item>
+	<item>Graduate Life Center</item>
+	<item>Hahn Hall North</item>
+	<item>Hahn Hall South</item>
+	<item>Henderson Hall</item>
+	<item>Holden Hall</item>
+	<item>Hutcheson Hall</item>
+	<item>Hancock Hall</item>
+	<item>Kelly Hall</item>
+	<item>Latham Hall</item>
+	<item>Lavery Hall</item>
+	<item>Litton-Reaves Hall</item>
+	<item>Major Williams Hall</item>
+	<item>McBryde Hall</item>
+	<item>Media Annex</item>
+	<item>Media Building</item>
+	<item>Norris Hall</item>
+	<item>Owens Hall</item>
+	<item>Pamplin Hall</item>
+	<item>Patton Hall</item>
+	<item>Price Hall</item>
+	<item>Randolph Hall</item>
+	<item>Robeson Hall</item>
+	<item>Sandy Hall</item>
+	<item>Saunders Hall</item>
+	<item>Seitz Hall</item>
+	<item>Shanks Hall</item>
+	<item>Smyth Hall</item>
+	<item>Squires Student Center</item>
+	<item>Steger Hall</item>
+	<item>Surge Building</item>
+	<item>Torgersen Hall</item>
+	<item>Wallace Hall</item>
+	<item>Whittemore Hall</item>
+	<item>Williams Hall</item>
+    </string-array>
 </resources>
