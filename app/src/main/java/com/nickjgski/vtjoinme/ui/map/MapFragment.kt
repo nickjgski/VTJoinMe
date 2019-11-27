@@ -1,6 +1,7 @@
 package com.nickjgski.vtjoinme.ui.map
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,14 +12,23 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.firebase.firestore.*
+import com.nickjgski.vtjoinme.Pin
+import com.nickjgski.vtjoinme.PinViewModel
 import com.nickjgski.vtjoinme.R
 
 
-class MapFragment : Fragment(), OnMapReadyCallback {
+class MapFragment : Fragment(), OnMapReadyCallback, EventListener<QuerySnapshot> {
 
-    private lateinit var mapViewModel: MapViewModel
+    private lateinit var pinViewModel: PinViewModel
     private lateinit var mapView: MapView
     private var gmap: GoogleMap? = null
+
+    private var pins: List<Pin> = emptyList()
+
+    val mFirestore = FirebaseFirestore.getInstance()
+    lateinit var mQuery: Query
 
     private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
 
@@ -27,18 +37,42 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mapViewModel =
-            ViewModelProviders.of(this).get(MapViewModel::class.java)
+        pinViewModel =
+            ViewModelProviders.of(this).get(PinViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_map, container, false)
         var mapViewBundle: Bundle? = null
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY)
         }
 
+        initFirestore()
+
         mapView = root.findViewById(R.id.mapView)
         mapView.onCreate(mapViewBundle)
         mapView.getMapAsync(this)
         return root
+    }
+
+    private fun initFirestore() {
+        mQuery = mFirestore.collection("pins")
+        mQuery.addSnapshotListener { snapshots, e ->
+            if(e != null) {
+                Log.w("MapFragment", "listen:error", e)
+                return@addSnapshotListener
+            }
+
+            for (dc in snapshots!!.documentChanges) {
+                when (dc.type) {
+                    DocumentChange.Type.ADDED -> pins.add(dc.document)
+                    DocumentChange.Type.MODIFIED -> Log.d("Doc Change", "${dc.document.data}")
+                    DocumentChange.Type.REMOVED -> Log.d("Doc Change", "${dc.document.data}")
+                }
+            }
+
+            for(doc in snapshots!!.documents) {
+
+            }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -83,8 +117,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap?) {
         gmap = googleMap
-        gmap?.setMinZoomPreference(12f)
-        val test: LatLng = LatLng(38.0760352,-78.4867328)
-        gmap?.moveCamera(CameraUpdateFactory.newLatLng(test))
+        gmap?.setMinZoomPreference(14f)
+        val vt = LatLng(37.227705, -80.421854)
+        gmap?.moveCamera(CameraUpdateFactory.newLatLng(vt))
+
+    }
+
+    override fun onEvent(p0: QuerySnapshot?, p1: FirebaseFirestoreException?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
