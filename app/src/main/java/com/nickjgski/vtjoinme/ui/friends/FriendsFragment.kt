@@ -1,4 +1,4 @@
-package com.nickjgski.vtjoinme.ui.tools
+package com.nickjgski.vtjoinme.ui.friends
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,20 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.nickjgski.vtjoinme.R
 
-class ToolsFragment : Fragment() {
+class FriendsFragment : Fragment() {
 
-    private lateinit var toolsViewModel: ToolsViewModel
+    private lateinit var slideshowViewModel: FriendsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        toolsViewModel =
-            ViewModelProviders.of(this).get(ToolsViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_tools, container, false)
-        val textView: TextView = root.findViewById(R.id.text_tools)
-        toolsViewModel.text.observe(this, Observer {
+        slideshowViewModel =
+            ViewModelProviders.of(this).get(FriendsViewModel::class.java)
+        val root = inflater.inflate(R.layout.fragment_friends, container, false)
+        val textView: TextView = root.findViewById(R.id.text_slideshow)
+        slideshowViewModel.text.observe(this, Observer {
             textView.text = it
         })
         return root

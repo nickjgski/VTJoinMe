@@ -8,24 +8,24 @@
     <fragment
         android:id="@+id/nav_map"
         android:name="com.nickjgski.vtjoinme.ui.map.MapFragment"
-        android:label="@string/menu_home" />
+        android:label="@string/menu_map" />
 
     <fragment
         android:id="@+id/nav_list"
         android:name="com.nickjgski.vtjoinme.ui.list.ListFragment"
-        android:label="@string/menu_gallery"
+        android:label="@string/menu_list"
         tools:layout="@layout/fragment_list" />
 
     <fragment
         android:id="@+id/nav_friends"
-        android:name="com.nickjgski.vtjoinme.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
+        android:name="com.nickjgski.vtjoinme.ui.friends.FriendsFragment"
+        android:label="@string/menu_friends"
         tools:layout="@layout/fragment_friends" />
 
     <fragment
-        android:id="@+id/nav_tools"
-        android:name="com.nickjgski.vtjoinme.ui.tools.ToolsFragment"
-        android:label="@string/menu_tools"
+        android:id="@+id/nav_account"
+        android:name="com.nickjgski.vtjoinme.ui.account.AccountFragment"
+        android:label="@string/menu_account"
         tools:layout="@layout/fragment_tools" />
 
 </navigation>

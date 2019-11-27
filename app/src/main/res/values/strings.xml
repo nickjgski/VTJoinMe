@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_name">VT JoinMe</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -9,8 +10,6 @@
 
     <string name="menu_map">Map</string>
     <string name="menu_list">Table List</string>
-    <string name="menu_Friends">Friends</string>
-    <string name="menu_tools">Tools</string>
-    <string name="menu_share">Share</string>
-    <string name="menu_send">Send</string>
+    <string name="menu_friends">Friends</string>
+    <string name="menu_account">Accounts</string>
 </resources>
