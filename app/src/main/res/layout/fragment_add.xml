@@ -151,14 +151,14 @@
             android:id="@+id/study_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/studying" />
+            android:text="@string/studying"/>
 
         <RadioButton
             android:id="@+id/dining_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/dining" />
+            android:text="@string/dining"/>
     </RadioGroup>
 
     <TextView
@@ -184,14 +184,14 @@
             android:id="@+id/quiet_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/quiet" />
+            android:text="@string/quiet"/>
 
         <RadioButton
             android:id="@+id/casual_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/casual" />
+            android:text="@string/casual"/>
     </RadioGroup>
 
     <EditText
