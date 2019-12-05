@@ -11,9 +11,6 @@
             android:id="@+id/nav_list"
             android:title="@string/menu_list" />
         <item
-            android:id="@+id/nav_friends"
-            android:title="@string/menu_friends" />
-        <item
             android:id="@+id/nav_account"
             android:title="@string/menu_account" />
     </group>
