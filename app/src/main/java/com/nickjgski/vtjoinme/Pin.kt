@@ -5,14 +5,15 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.GeoPoint
 import java.util.*
 
-data class Pin(val uid: String = "",
-               val building: String = "",
-               val totalSeats: Int = -1,
-               val availSeats: Int = -1,
-               val timestamp: Date = Date(),
-               val study: Boolean = false,
-               val quiet: Boolean = false,
-               val desc: String = "",
-               val public: Boolean = false,
-               val location: GeoPoint = GeoPoint(0.0, 0.0)
+data class Pin(
+    var uid: String = "",
+    val building: String = "",
+    val totalSeats: Int = -1,
+    val availSeats: Int = -1,
+    val expTime: Date = Date(),
+    val study: Boolean = false,
+    val quiet: Boolean = false,
+    val desc: String = "",
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0
 )

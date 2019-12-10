@@ -1,5 +1,7 @@
 package com.nickjgski.vtjoinme
 
+import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -13,14 +15,32 @@ import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.location.*
+import kotlinx.coroutines.Job
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
+    private var coroutineJob: Job? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private val locationRequest = LocationRequest.create()?.apply {
+        interval = 1000
+        fastestInterval = 500
+        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
+
+    var latlong: Location? = null
+
+    lateinit var  geocoder : Geocoder
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -41,6 +61,28 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        geocoder = Geocoder(this, Locale.getDefault())
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                // Got last known location. In some rare situations this can be null.
+                location?.let{latlong=it}
+
+            }
+
+        //setting up the callback
+        var locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                locationResult ?: return
+                latlong?.let { latlong = it }
+            }
+        }
+
+
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+            locationCallback,
+            null)
 
     }
 

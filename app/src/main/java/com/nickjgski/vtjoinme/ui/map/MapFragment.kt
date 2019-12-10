@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -17,7 +16,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.EventListener
 import com.nickjgski.vtjoinme.Pin
-import com.nickjgski.vtjoinme.PinViewModel
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,15 +24,15 @@ import com.nickjgski.vtjoinme.R
 
 class MapFragment : Fragment(), OnMapReadyCallback, EventListener<QuerySnapshot> {
 
-    private lateinit var pinViewModel: PinViewModel
     private lateinit var mapView: MapView
     private var gmap: GoogleMap? = null
 
     private var pins: MutableList<Pin> = mutableListOf()
     private var markers: MutableList<Marker> = mutableListOf()
 
-    val mFirestore = FirebaseFirestore.getInstance()
+    private val mFirestore = FirebaseFirestore.getInstance()
     lateinit var mQuery: Query
+    private var mRegistration: ListenerRegistration? = null
 
     private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
 
@@ -47,8 +45,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, EventListener<QuerySnapshot>
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        pinViewModel =
-            ViewModelProviders.of(this).get(PinViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_map, container, false)
         var mapViewBundle: Bundle? = null
         if (savedInstanceState != null) {
@@ -63,38 +59,122 @@ class MapFragment : Fragment(), OnMapReadyCallback, EventListener<QuerySnapshot>
         return root
     }
 
+    fun startListening() {
+        if (mQuery != null && mRegistration == null) {
+            mRegistration = mQuery.addSnapshotListener(this)
+        }
+    }
+
     private fun initFirestore() {
         mQuery = mFirestore.collection("pins")
-        mQuery.addSnapshotListener {snapshots, e ->
-            if(e != null) {
-                Log.w("MapFragment", "listen:error", e)
+        mQuery.addSnapshotListener { _, e ->
+            if (e != null) {
                 return@addSnapshotListener
             }
+        }
+        startListening()
+    }
 
-            for(doc in snapshots!!.documents) {
-                val map = doc.data
+    override fun onEvent(snapshots: QuerySnapshot?, e: FirebaseFirestoreException?) {
+        if(e != null) {
+            Log.w("MapFragment", "listen:error", e)
+        }
 
-                pins.add(Pin(doc.id, map?.get("building").toString(),
-                    map?.get("totalSeats").toString().toInt(),
-                    map?.get("availSeats").toString().toInt(),
-                    map?.get("expTime") as Date,
-                    map?.get("study").toString().toBoolean(),
-                    map?.get("quiet").toString().toBoolean(),
-                    map?.get("desc").toString(),
-                    map?.get("public").toString().toBoolean(),
-                    map?.get("latlong") as GeoPoint
-                ))
-            }
+        /*
+        for(doc in snapshots!!.documents) {
+            pins.add(0, doc.toObject(Pin::class.java)!!)
+            pins[0].uid = doc.id
 
+            pins.add(Pin(doc.id, map?.get("building").toString(),
+                map?.get("totalSeats").toString().toInt(),
+                map?.get("availSeats").toString().toInt(),
+                map?.get("expTime") as Date,
+                map?.get("study").toString().toBoolean(),
+                map?.get("quiet").toString().toBoolean(),
+                map?.get("desc").toString(),
+                map?.get("public").toString().toBoolean(),
+                map?.get("latlong") as GeoPoint
+            ))
 
-            for (dc in snapshots!!.documentChanges) {
-                when (dc.type) {
-                    DocumentChange.Type.ADDED -> addPinsToMap()
-                    DocumentChange.Type.MODIFIED -> Log.d("Doc Change", "${dc.document.data}")
-                    DocumentChange.Type.REMOVED -> deleteExpired()
-                }
+        }
+        */
+
+        for (dc in snapshots!!.documentChanges) {
+            when (dc.type) {
+                DocumentChange.Type.ADDED -> onDocumentAdded(dc)
+                DocumentChange.Type.MODIFIED -> onDocumentModified(dc)
+                DocumentChange.Type.REMOVED -> onDocumentDeleted(dc)
             }
         }
+    }
+
+    private fun addPinsToMap() {
+        deleteExpired()
+        pins.forEach {
+            var use: String = if(it.study) {
+                "Study"
+            } else {
+                "Eat"
+            }
+            gmap?.addMarker(MarkerOptions().position(LatLng(it.latitude, it.longitude)).title("${it.building}, $use"))
+                ?.let { it1 -> {
+                    it1.tag = it.uid
+                    markers.add(it1)
+                    Log.d("Add Markers", "Marker added: ${it.uid}")
+                } }
+        }
+    }
+
+    private fun deleteExpired() {
+        var removedPins = mutableListOf<Pin>()
+        Log.d("Remove Markers", "Markers: $markers")
+        pins.forEach {
+            if(it.expTime < Date()) {
+                val currPin = it
+                val currMarker = markers.firstOrNull { tag == currPin.uid }
+                Log.d("Remove Markers", "Found matching marker")
+                markers.removeIf { tag == currPin.uid }
+                currMarker?.remove()
+                mFirestore.document("pins/${it.uid}").delete()
+                removedPins.add(currPin)
+            }
+        }
+        pins.removeAll(removedPins)
+    }
+
+    private fun deletePin(id: String) {
+        var removedPins = mutableListOf<Pin>()
+        Log.d("Remove Markers", "Markers: ${markers}")
+        pins.forEach {
+            if(it.uid == id) {
+                val currPin = it
+                val currMarker = markers.firstOrNull { tag == currPin.uid }
+                Log.d("Remove Marker", "Found matching marker")
+                Log.d("Remove Marker", currMarker?.remove().toString())
+                Log.d("Remove Marker", "Marker list removal: ${markers.removeIf { tag == currPin.uid }}")
+                mFirestore.document("pins/${it.uid}").delete()
+                removedPins.add(currPin)
+            }
+        }
+        pins.removeAll(removedPins)
+    }
+
+    private fun onDocumentAdded(change: DocumentChange) {
+        Log.d("Doc added", change.document.id)
+        pins.add(0, change.document.toObject(Pin::class.java)!!)
+        pins[0].uid = change.document.id
+        Log.d("Doc added", pins.toString())
+        addPinsToMap()
+    }
+
+    private fun onDocumentModified(change: DocumentChange) {
+        var uid = change.document.id
+        pins[pins.indexOf(pins.first { it.uid == uid })] = change.document.toObject(Pin::class.java)
+        addPinsToMap()
+    }
+
+    private fun onDocumentDeleted(change: DocumentChange) {
+        deletePin(change.document.id)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -142,89 +222,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, EventListener<QuerySnapshot>
         gmap?.setMinZoomPreference(14f)
         val vt = LatLng(37.227705, -80.421854)
         gmap?.moveCamera(CameraUpdateFactory.newLatLng(vt))
-        addPinsToMap()
-    }
-
-    override fun onEvent(snapshots: QuerySnapshot?, e: FirebaseFirestoreException?) {
-        if(e != null) {
-            Log.w("MapFragment", "listen:error", e)
-        }
-
-        for(doc in snapshots!!.documents) {
-            val map = doc.data
-
-            pins.add(Pin(doc.id, map?.get("building").toString(),
-                map?.get("totalSeats").toString().toInt(),
-                map?.get("availSeats").toString().toInt(),
-                map?.get("expTime") as Date,
-                map?.get("study").toString().toBoolean(),
-                map?.get("quiet").toString().toBoolean(),
-                map?.get("desc").toString(),
-                map?.get("public").toString().toBoolean(),
-                map?.get("latlong") as GeoPoint
-            ))
-        }
-
-
-        for (dc in snapshots!!.documentChanges) {
-            when (dc.type) {
-                DocumentChange.Type.ADDED -> addPinsToMap()
-                DocumentChange.Type.MODIFIED -> Log.d("Doc Change", "${dc.document.data}")
-                DocumentChange.Type.REMOVED -> deletePin(dc.document.id)
-            }
-        }
-    }
-
-    private fun addPinsToMap() {
-        deleteExpired()
-        pins.forEach {
-            var use: String = if(it.study) {
-                "Study"
-            } else {
-                "Eat"
-            }
-            gmap?.addMarker(MarkerOptions().position(LatLng(it.location.latitude, it.location.longitude)).title("${it.building}, $use"))
-                ?.let { it1 -> {
-                    it1.tag = it.uid
-                    markers.add(it1)
-                    Log.d("Add Markers", "Marker added")
-                } }
-        }
-        Log.d("Add Markers", "Markers: ${markers}")
-    }
-
-    private fun deleteExpired() {
-        val removedPins = mutableListOf<Pin>()
-        Log.d("Remove Markers", "Markers: ${markers}")
-        pins.forEach {
-            if(it.timestamp < Date()) {
-                val currPin = it
-                val currMarker = markers.firstOrNull { tag == currPin.uid }
-                Log.d("Remove Markers", "Found matching marker")
-                markers.removeIf { tag == currPin.uid }
-                currMarker?.remove()
-                mFirestore.document("pins/${it.uid}").delete()
-                removedPins.add(currPin)
-            }
-        }
-        pins.removeAll(removedPins)
-    }
-
-    private fun deletePin(id: String) {
-        val removedPins = mutableListOf<Pin>()
-        Log.d("Remove Markers", "Markers: ${markers}")
-        pins.forEach {
-            if(it.uid == id) {
-                val currPin = it
-                val currMarker = markers.firstOrNull { tag == currPin.uid }
-                Log.d("Remove Markers", "Found matching marker")
-                markers.removeIf { tag == currPin.uid }
-                currMarker?.remove()
-                mFirestore.document("pins/${it.uid}").delete()
-                removedPins.add(currPin)
-            }
-        }
-        pins.removeAll(removedPins)
     }
 
     private  fun getDateFromString(datetoSaved: String?): Date? {

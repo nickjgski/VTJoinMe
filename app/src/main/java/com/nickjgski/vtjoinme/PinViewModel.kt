@@ -7,5 +7,4 @@ class PinViewModel: ViewModel() {
 
     val mFirestore = FirebaseFirestore.getInstance()
 
-
 }

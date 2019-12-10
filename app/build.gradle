@@ -87,6 +87,11 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1"
 
     implementation "com.google.android.gms:play-services-maps:17.0.0"
+
+    //location via Play Services
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+
+    implementation 'com.firebaseui:firebase-ui-firestore:6.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
