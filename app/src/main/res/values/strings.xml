@@ -13,16 +13,27 @@
     <string name="menu_friends">Friends</string>
     <string name="menu_account">Accounts</string>
     <string name="menu_add">Add A Table</string>
+    <string name="menu_detail">Table Details</string>
 
+    <string-array name="activities">
+        <item>Activity</item>
+        <item>Study</item>
+        <item>Dining</item>
+    </string-array>
+
+    <string-array name="envs">
+        <item>Environment</item>
+        <item>Quiet</item>
+        <item>Casual</item>
+    </string-array>
 
     <string-array name="buildings">
+        <item>Building</item>
         <item>Agnew Hall</item>
         <item>Architecture Annex</item>
         <item>Bishop-Favrao Hall</item>
         <item>Burruss Hall</item>
-        <item>Newman Library</item>
         <item>Cheatham Hall</item>
-        <item>New Classroom Building</item>
         <item>Cowgill Hall</item>
         <item>Davidson Hall</item>
         <item>Derring Hall</item>
@@ -48,6 +59,8 @@
         <item>McBryde Hall</item>
         <item>Media Annex</item>
         <item>Media Building</item>
+        <item>Newman Library</item>
+        <item>New Classroom Building</item>
         <item>Norris Hall</item>
         <item>Owens Hall</item>
         <item>Pamplin Hall</item>
@@ -161,4 +174,5 @@
     <string name="casual">Casual</string>
     <string name="description">Description:</string>
     <string name="add">Add</string>
+    <string name="join">Join</string>
 </resources>

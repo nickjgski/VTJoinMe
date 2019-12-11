@@ -88,7 +88,7 @@ class AddFragment : Fragment() {
             "expTime" to Timestamp(time),
             "quiet" to quiet,
             "study" to study,
-            "latitutde" to location.latitude,
+            "latitude" to location.latitude,
             "longitude" to location.longitude
         )
 

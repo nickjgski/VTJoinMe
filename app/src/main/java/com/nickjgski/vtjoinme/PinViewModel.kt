@@ -5,6 +5,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class PinViewModel: ViewModel() {
 
-    val mFirestore = FirebaseFirestore.getInstance()
+    var currTable: String = ""
 
 }

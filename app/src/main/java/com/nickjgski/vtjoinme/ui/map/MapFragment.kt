@@ -5,7 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -22,7 +24,7 @@ import java.util.*
 import com.nickjgski.vtjoinme.R
 
 
-class MapFragment : Fragment(), OnMapReadyCallback, EventListener<QuerySnapshot> {
+class MapFragment : Fragment(), OnMapReadyCallback, EventListener<QuerySnapshot>, GoogleMap.OnMarkerClickListener {
 
     private lateinit var mapView: MapView
     private var gmap: GoogleMap? = null
@@ -59,20 +61,19 @@ class MapFragment : Fragment(), OnMapReadyCallback, EventListener<QuerySnapshot>
         return root
     }
 
-    fun startListening() {
-        if (mQuery != null && mRegistration == null) {
-            mRegistration = mQuery.addSnapshotListener(this)
-        }
-    }
-
     private fun initFirestore() {
         mQuery = mFirestore.collection("pins")
-        mQuery.addSnapshotListener { _, e ->
+        mQuery.addSnapshotListener { snapshots, e ->
             if (e != null) {
                 return@addSnapshotListener
             }
+
+            for(doc in snapshots!!.documents) {
+                pins.add(0, doc.toObject(Pin::class.java)!!)
+                pins[0].uid = doc.id
+            }
+            addPinsToMap()
         }
-        startListening()
     }
 
     override fun onEvent(snapshots: QuerySnapshot?, e: FirebaseFirestoreException?) {
@@ -110,18 +111,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, EventListener<QuerySnapshot>
 
     private fun addPinsToMap() {
         deleteExpired()
+        Log.d("Add Markers", "Pins: $pins")
         pins.forEach {
             var use: String = if(it.study) {
                 "Study"
             } else {
                 "Eat"
             }
-            gmap?.addMarker(MarkerOptions().position(LatLng(it.latitude, it.longitude)).title("${it.building}, $use"))
-                ?.let { it1 -> {
-                    it1.tag = it.uid
-                    markers.add(it1)
-                    Log.d("Add Markers", "Marker added: ${it.uid}")
-                } }
+            var marker = gmap?.addMarker(MarkerOptions()
+                    .position(LatLng(it.latitude, it.longitude))
+                    .title("${it.building}, $use"))
+            if(marker != null) {
+                markers.add(0, marker)
+                markers[0].tag = it.uid
+            }
+
         }
     }
 
@@ -187,6 +191,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, EventListener<QuerySnapshot>
         mapView.onSaveInstanceState(mapViewBundle)
     }
 
+    override fun onMarkerClick(marker: Marker): Boolean {
+        Log.d("Detail", "Map Tag: ${marker.tag}")
+        findNavController().navigate(R.id.nav_detail, bundleOf("id" to marker.tag))
+        return true
+    }
+
     override fun onResume() {
         super.onResume()
         mapView.onResume()
@@ -222,6 +232,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, EventListener<QuerySnapshot>
         gmap?.setMinZoomPreference(14f)
         val vt = LatLng(37.227705, -80.421854)
         gmap?.moveCamera(CameraUpdateFactory.newLatLng(vt))
+        gmap?.setOnMarkerClickListener(this)
+        addPinsToMap()
     }
 
     private  fun getDateFromString(datetoSaved: String?): Date? {
