@@ -1,0 +1,15 @@
+#VTJoinMe
+
+This app is designed to allow VT students to more effectively use the space on
+campus by creating pins which represent tables. These pins show how many seats
+are available as well as other features.
+
+Setup & Install
+This folder will be recognized by Android Studio (3.5 or newer) as an Android
+project. Opening it will give the familiar layout. A Firebase project connected
+to Google Cloud Platform must be created, as the pins users create are stored
+in Firebase and the Maps SDK requires Google Cloud Platform. The new Firebase
+project should have authentication through email enabled, as well as Cloud
+Firestore. The google-services.json should be changed to the file generated when
+creating a new Firebase project. The API key in AndroidManifest.xml should be
+changed to the appropriate new Maps SDK key for the app to function.
